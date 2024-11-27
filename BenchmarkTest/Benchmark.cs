@@ -3,7 +3,6 @@ using BenchmarkDotNet.Attributes;
 
 namespace BenchmarkTest;
 
-[ShortRunJob]
 public partial class Benchmark
 {
     private static readonly string[] StackTraceLines = """
