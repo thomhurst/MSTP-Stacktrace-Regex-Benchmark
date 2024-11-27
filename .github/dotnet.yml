@@ -1,0 +1,23 @@
+name: .NET
+
+on:
+  push:
+    branches: ["*"]
+
+jobs:
+  pipeline:
+    runs-on: 'ubuntu-latest'
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET 9
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 9.0.x
+
+      - name: Build .NET 9
+        run: dotnet run -c Release
+        working-directory: BenchmarkTest
