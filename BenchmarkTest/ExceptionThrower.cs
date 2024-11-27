@@ -4,11 +4,11 @@ public class ExceptionThrower
 {
     private static readonly int RecursiveCalls = 50;
 
-    public static Exception GetExceptionWithStacktrace()
+    public static async Task<Exception> GetExceptionWithStacktrace()
     {
         try
         {
-            return Nested1(0);
+            return await Nested1(0);
         }
         catch (Exception e)
         {
@@ -17,48 +17,49 @@ public class ExceptionThrower
         }
     }
 
-    public static Exception Nested1(int i)
+    public static async Task<Exception> Nested1(int i)
     {
         if (i < RecursiveCalls)
         {
-            return Nested1(++i);
+            return await Nested1(++i);
         }
         
-        return Nested2(0);
+        return await Nested2(0);
     }
 
-    public static Exception Nested2(int i)
+    public static async Task<Exception> Nested2(int i)
     {
         if (i < RecursiveCalls)
         {
-            return Nested2(++i);
+            return await Nested2(++i);
         }
         
-        return Nested3(0);
+        return await Nested3(0);
     }
     
-    public static Exception Nested3(int i)
+    public static async Task<Exception> Nested3(int i)
     {
         if (i < RecursiveCalls)
         {
-            return Nested3(++i);
+            return await Nested3(++i);
         }
         
-        return Nested4(0);
+        return await Nested4(0);
     }
     
-    public static Exception Nested4(int i)
+    public static async Task<Exception> Nested4(int i)
     {
         if (i < RecursiveCalls)
         {
-            return Nested4(++i);
+            return await Nested4(++i);
         }
         
-        return Nested5();
+        return await Nested5();
     }
 
-    public static Exception Nested5()
+    public static async Task<Exception> Nested5()
     {
+        await Task.CompletedTask;
         throw new Exception("Something went wrong!!!");
     }
 }
