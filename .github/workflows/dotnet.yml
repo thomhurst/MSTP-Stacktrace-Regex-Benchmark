@@ -5,7 +5,11 @@ on:
 
 jobs:
   pipeline:
-    runs-on: 'ubuntu-latest'
+    strategy: 
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+      fail-fast: false
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
@@ -17,6 +21,6 @@ jobs:
         with:
           dotnet-version: 9.0.x
 
-      - name: Build .NET 9
+      - name: Run Benchmarks
         run: dotnet run -c Release
         working-directory: BenchmarkTest
