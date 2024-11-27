@@ -3,6 +3,7 @@ using BenchmarkDotNet.Attributes;
 
 namespace BenchmarkTest;
 
+[ShortRunJob]
 public partial class Benchmark
 {
     private static readonly string[] StackTraceLines = """
@@ -35,6 +36,10 @@ public partial class Benchmark
                                                           at TestingPlatformEntryPoint.Main(String[]) in /_/TUnit.TestProject/obj/Release/net8.0/osx-x64/TestPlatformEntryPoint.cs:line 16
                                                           at TestingPlatformEntryPoint.<Main>(String[])
                                                        """.Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
+
+    private static string[] DynamicStacktraceLines { get; } = ExceptionThrower.GetExceptionWithStacktrace()
+            .StackTrace!
+            .Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
     
     [GeneratedRegex(@$"^   at ((?<code>.+) in (?<file>.+):line (?<line>\d+)|(?<code1>.+))$", RegexOptions.ExplicitCapture, 1000)]
     private static partial Regex OriginalRegex();
@@ -52,9 +57,27 @@ public partial class Benchmark
     }
     
     [Benchmark]
+    public void OriginalRegexBenchmark_DynamicStacktrace()
+    {
+        foreach (var stackTraceLine in DynamicStacktraceLines)
+        {
+            _ = OriginalRegex().Match(stackTraceLine);
+        }
+    }
+    
+    [Benchmark]
     public void NewRegexBenchmark()
     {
         foreach (var stackTraceLine in StackTraceLines)
+        {
+            _ = NewRegex().Match(stackTraceLine);
+        }
+    }
+    
+    [Benchmark]
+    public void NewRegexBenchmark_DynamicStacktrace()
+    {
+        foreach (var stackTraceLine in DynamicStacktraceLines)
         {
             _ = NewRegex().Match(stackTraceLine);
         }
