@@ -3,6 +3,7 @@ using BenchmarkDotNet.Attributes;
 
 namespace BenchmarkTest;
 
+[ShortRunJob]
 public partial class Benchmark
 {
     private static readonly string[] StackTraceLines = """
@@ -451,6 +452,9 @@ public partial class Benchmark
     
     [GeneratedRegex(@"^   at (?<code>.+\))( in (?<file>.+):line (?<line>\d+))?$", RegexOptions.ExplicitCapture, 1000)]
     private static partial Regex NewRegex();
+    
+    [GeneratedRegex(@"^   at (?<code>.+\))", RegexOptions.ExplicitCapture, 1000)]
+    internal static partial Regex NewAOTRegex();
 
     [Benchmark]
     public void OriginalRegexBenchmark()
@@ -473,6 +477,7 @@ public partial class Benchmark
     [Benchmark]
     public void OriginalRegexBenchmark_AOTStacktrace()
     {
+       // This actually fails matching
        foreach (var stackTraceLine in AOTStacktraceLines)
        {
           _ = OriginalRegex().Match(stackTraceLine);
@@ -502,7 +507,7 @@ public partial class Benchmark
     {
        foreach (var stackTraceLine in AOTStacktraceLines)
        {
-          _ = NewRegex().Match(stackTraceLine);
+          _ = NewAOTRegex().Match(stackTraceLine);
        }
     }
 }
