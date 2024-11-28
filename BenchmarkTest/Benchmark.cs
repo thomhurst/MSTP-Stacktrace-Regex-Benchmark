@@ -446,14 +446,12 @@ public partial class Benchmark
             .StackTrace!
             .Split([Environment.NewLine], StringSplitOptions.RemoveEmptyEntries);
     
-    [GeneratedRegex(@$"^   at ((?<code>.+) in (?<file>.+):line (?<line>\d+)|(?<code1>.+))$", RegexOptions.ExplicitCapture, 1000)]
+    [GeneratedRegex(@$"^   at ((?<code>.+) in (?<file>.+):line (?<line>\d+)|(?<code1>.+))$", RegexOptions.ExplicitCapture)]
     private static partial Regex OriginalRegex();
     
-    [GeneratedRegex(@"^   at (?<code>.+\))( in (?<file>.+):line (?<line>\d+))?$", RegexOptions.ExplicitCapture, 1000)]
+    [GeneratedRegex(@"^   at (?<code>.+\))( in (?<file>.+):line (?<line>\d+))?( (?<offset>\+ .+))?$", RegexOptions.ExplicitCapture)]
     private static partial Regex NewRegex();
-    
-    [GeneratedRegex(@"^   at (?<code>.+\))", RegexOptions.ExplicitCapture, 1000)]
-    internal static partial Regex NewAOTRegex();
+   
 
     [Benchmark]
     public void OriginalRegexBenchmark()
@@ -506,7 +504,7 @@ public partial class Benchmark
     {
        foreach (var stackTraceLine in AOTStacktraceLines)
        {
-          _ = NewAOTRegex().Match(stackTraceLine);
+          _ = NewRegex().Match(stackTraceLine);
        }
     }
 }
